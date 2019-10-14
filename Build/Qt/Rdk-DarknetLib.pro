@@ -28,6 +28,7 @@ unix {
     DESTDIR = $$PWD/../../../../Bin/Platform/Linux/Lib.Qt
 
     contains(DEFINES,RDK_USE_DARKNET) {
+    INCLUDEPATH += ../../ThirdParty/darknet/include/
 
     HEADERS += ../../ThirdParty/darknet/include/darknet.h \
     ../../Core/TDarknetObjectDetector.h \

@@ -1,9 +1,9 @@
-#ifndef Rdk_@UPPUDarknetLib_CPP
-#define Rdk_@UPPUDarknetLib_CPP
+#ifndef Rdk_UDarknetLib_CPP
+#define Rdk_UDarknetLib_CPP
 
-#include "UDarknetLib.h"
+#include "Lib.h"
 
-namespace Rdk {
+namespace RDK {
 
 UDarknetLib DarknetLib;
 

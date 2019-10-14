@@ -1,8 +1,9 @@
 #ifndef RDK_TDarknetObjectDetectorH
 #define RDK_TDarknetObjectDetectorH
 
-#include "TPythonIntegrationInclude.h"
-#include "TPythonIntegrationUtil.h"
+//#include "TPythonIntegrationInclude.h"
+//#include "TPythonIntegrationUtil.h"
+#include "../../../Rdk/Deploy/Include/rdk.h"
 #include "../ThirdParty/darknet/include/darknet_utils.h"
 
 namespace RDK {

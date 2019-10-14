@@ -1,9 +1,10 @@
 #ifndef RDK_TDarknetUBitmapClassifierH
 #define RDK_TDarknetUBitmapClassifierH
 
-#include "TPythonIntegrationInclude.h"
+//#include "TPythonIntegrationInclude.h"
 //#include "TPythonIntegrationUtil.h"
 #include "../ThirdParty/darknet/include/darknet_utils.h"
+#include "../../../Rdk/Deploy/Include/rdk.h"
 
 namespace RDK {
 

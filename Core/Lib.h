@@ -9,7 +9,7 @@
 #include "TDarknetUBitmapClassifier.h"
 #endif
 
-namespace Rdk {
+namespace RDK {
 
 class RDK_LIB_TYPE UDarknetLib: public RDK::ULibrary
 {
