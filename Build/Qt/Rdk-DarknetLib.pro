@@ -43,7 +43,6 @@ unix {
     DESTDIR = $$PWD/../../../../Bin/Platform/Win/Lib.Qt
 }
 
-contains(DEFINES,RDK_USE_PYTHON) {
 
 HEADERS += \
     ../../Core/Lib.h
@@ -51,5 +50,5 @@ HEADERS += \
 
 SOURCES += \
     ../../Core/Lib.cpp
-}
+
 
