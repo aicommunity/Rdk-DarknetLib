@@ -31,11 +31,11 @@ unix {
     INCLUDEPATH += ../../ThirdParty/darknet/include/
 
     HEADERS += ../../ThirdParty/darknet/include/darknet.h \
+    ../../Core/TDarknetComponent.h \
     ../../Core/TDarknetObjectDetector.h \
-    ../../Core/TDarknetUBitmapClassifier.h \
-    ../../ThirdParty/darknet/include/darknet_utils.h
+    ../../Core/TDarknetUBitmapClassifier.h
 
-    SOURCES += ../../ThirdParty/darknet/include/darknet_utils.cpp \
+    SOURCES += ../../Core/TDarknetComponent.cpp \
     ../../Core/TDarknetUBitmapClassifier.cpp \
     ../../Core/TDarknetObjectDetector.cpp
 }

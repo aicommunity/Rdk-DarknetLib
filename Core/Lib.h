@@ -1,5 +1,5 @@
-#ifndef Rdk_@UPPUDarknetLib_H
-#define Rdk_@UPPUDarknetLib_H
+#ifndef Rdk_UDarknetLib_H
+#define Rdk_UDarknetLib_H
 
 #include "../../../Rdk/Deploy/Include/rdk.h"
 //open file here

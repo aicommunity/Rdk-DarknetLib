@@ -3,54 +3,23 @@
 
 //#include "TPythonIntegrationInclude.h"
 //#include "TPythonIntegrationUtil.h"
-#include "../ThirdParty/darknet/include/darknet_utils.h"
-#include "../../../Rdk/Deploy/Include/rdk.h"
+
+#include "../../Rdk-CRLib/Core/UClassifierBase.h"
+#include "TDarknetComponent.h"
+
+#define CLASS_UNDEFINED -2
+#define CLASS_LOWQUAL -3
 
 namespace RDK {
 
-class TDarknetUBitmapClassifier: public RDK::UNet
+class TDarknetUBitmapClassifier: public UClassifierBase, public TDarknetComponent
 {
 public: // Свойства
-/// Входное изображение
-/// UPropertyInputData<UBitmap,TDarknetUBitmapClassifier> InputImage;
-
-//Входные матрицы с данными об обнаружениях
-/// Содержит изображения (обработанные) для классификации
-UPropertyInputData<std::vector<UBitmap>, TDarknetUBitmapClassifier, ptPubInput> InputImages;
-
-/// Целое число, определяющее цветовую модель, на которую рассчитана сеть
-/// ubmRGB24=3 - цветное изображение
-/// umbY8=400 - черно-белое изображение
-ULProperty<int,TDarknetUBitmapClassifier, ptPubParameter> ImageColorModel;
-
-/// Количество классов объектов (какой размер будет у вектора
-ULProperty<int,TDarknetUBitmapClassifier, ptPubParameter> NumClasses;
-/// Порог уверенности, выше которого обнаружения считаются валидными (probability)
-ULProperty<float,TDarknetUBitmapClassifier, ptPubParameter> ProbabilityThreshold;
-/// Порог объектности, выше которого обнаружения считаются валидными (objectness)
-ULProperty<float,TDarknetUBitmapClassifier, ptPubParameter> ObjectnessThreshold;
-
-/// Выходная матрица с классами объектов
-UPropertyOutputData<std::vector<int>,TDarknetUBitmapClassifier, ptPubOutput> OutputClasses;
-
-/// Выходная матрица. Количество столбцов по числу объектов, количество строк в столбце по числу классов
-/// Каждое значение - уверенность класса
-UPropertyOutputData<MDMatrix<double>, TDarknetUBitmapClassifier> OutputConfidences;
-
-///Путь к файлу конфигурации Йолы
-ULProperty<std::string,TDarknetUBitmapClassifier, ptPubParameter> ConfigPath;
-///Путь к файлу весов Йолы
-ULProperty<std::string,TDarknetUBitmapClassifier, ptPubParameter> WeightsPath;
 
 protected: // Переменные состояния
 
-UGraphics Graph;
-UBitmap Canvas;
 
-bool Initialized;
 
-network *Network;
-//layer* TopLayer;
 
 public: // Методы
 // --------------------------
@@ -71,27 +40,26 @@ virtual TDarknetUBitmapClassifier* New(void);
 // Скрытые методы управления счетом
 // --------------------------
 protected:
-bool Initialize(void);
-
-virtual void AInit(void);
-virtual void AUnInit(void);
 
 // Восстановление настроек по умолчанию и сброс процесса счета
-virtual bool ADefault(void);
+virtual bool ADNDefault(void);
 
 // Обеспечивает сборку внутренней структуры объекта
 // после настройки параметров
 // Автоматически вызывает метод Reset() и выставляет Ready в true
 // в случае успешной сборки
-virtual bool ABuild(void);
+virtual bool ADNBuild(void);
 
 // Сброс процесса счета без потери настроек
-virtual bool AReset(void);
+virtual bool ADNReset(void);
 
 // Выполняет расчет этого объекта
-virtual bool ACalculate(void);
+virtual bool ADNCalculate(void);
 // --------------------------
-image UBitmapToImage(const UBitmap& ub);
+
+/// Обрабатывает одно изображение
+virtual bool ClassifyBitmap(UBitmap &bmp, MDVector<double> &output_confidences, double conf_thresh, int &class_id, bool &is_classified);
+
 };
 
 

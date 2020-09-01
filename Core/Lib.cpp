@@ -25,7 +25,6 @@ UDarknetLib::UDarknetLib(void)
 // Не требуется предварительная очистка массива и уборка памяти.
 void UDarknetLib::CreateClassSamples(RDK::UStorage *storage)
 {
-
 #ifdef RDK_USE_DARKNET
  UploadClass<TDarknetObjectDetector>("TDarknetObjectDetector","DarknetObjectDetector");
  UploadClass<TDarknetUBitmapClassifier>("TDarknetUBitmapClassifier","DarknetUBitmapClassifier");

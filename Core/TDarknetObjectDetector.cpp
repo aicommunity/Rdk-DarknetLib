@@ -27,19 +27,13 @@ namespace RDK {
 // Конструкторы и деструкторы
 // --------------------------  //DetectionClass("DetectionClass",this),
 TDarknetObjectDetector::TDarknetObjectDetector(void)
-: InputImage("InputImage",this),
-  //Initialized(false),
-  OutputObjects("OutputObjects",this),
-  ImageColorModel("ImageColorModel",this),
+://Initialized(false),
   //ModelPathYOLO("ModelPathYOLO",this),
   //AnchorsPathYOLO("AnchorsPathYOLO",this),
   //ClassesPathYOLO("ClassesPathYOLO",this),
-  ProbabilityThreshold("ProbabilityThreshold",this),
   ObjectnessThreshold("ObjectnessThreshold",this),
-  OutputImage("OutputImage",this),
+
   FilterClassesList("FilterClassesList",this),
-  ConfigPath("ConfigPath",this),
-  WeightsPath("WeightsPath",this),
   //LoadTargetClassesYOLO("LoadTargetClassesYOLO",this)
   //OutputConfidences("OutputConfidences", this)
   ClassesList("ClassesList",this),
@@ -121,45 +115,16 @@ TDarknetObjectDetector* TDarknetObjectDetector::New(void)
 }
 // --------------------------
 
-void TDarknetObjectDetector::AInit(void)
-{
-    if(!Initialized)
-    {
-       if(!Initialize())
-           return;
-    }
-}
+
 
 // --------------------------
 // Скрытые методы управления счетом
 // --------------------------
-bool TDarknetObjectDetector::Initialize(void)
-{
-    Network = load_network(const_cast<char*>(ConfigPath->c_str()), const_cast<char*>(WeightsPath->c_str()), 0);
-    TopLayer = Network->layers[Network->n-1];
-    set_batch_network(Network, 1);
-    if(Network)
-    {
-        Initialized=true;
-        return true;
-    }
-    else
-    {
-        Initialized=false;
-        return false;
-    }
 
-}
-
-void TDarknetObjectDetector::AUnInit(void)
-{
-}
 
 // Восстановление настроек по умолчанию и сброс процесса счета
-bool TDarknetObjectDetector::ADefault(void)
+bool TDarknetObjectDetector::ADNDefault(void)
 {
- Initialized=false;
- ProbabilityThreshold = 0.0f;
  ObjectnessThreshold = 0.0f;
  FilterClassesList=false;
  return true;
@@ -168,243 +133,186 @@ bool TDarknetObjectDetector::ADefault(void)
 // после настройки параметров
 // Автоматически вызывает метод Reset() и выставляет Ready в true
 // в случае успешной сборки
-bool TDarknetObjectDetector::ABuild(void)
+bool TDarknetObjectDetector::ADNBuild(void)
 {
  return true;
 }
 
 // Сброс процесса счета без потери настроек
-bool TDarknetObjectDetector::AReset(void)
+bool TDarknetObjectDetector::ADNReset(void)
 {
  //Initialized = false;
  return true;
 }
 
 // Выполняет расчет этого объекта
-bool TDarknetObjectDetector::ACalculate(void)
+
+bool TDarknetObjectDetector::ADNCalculate(void)
 {
-// if(!Initialized)
-// {
-//    if(!Initialize())
-//        return true;
-// }
+    if(!InputImage.IsConnected())
+        return true;
 
- if(!InputImage.IsConnected())
-  return true;
+    ProcessedBmp = *InputImage;
 
- OutputImage->SetColorModel(ubmRGB24,false);
- InputImage->ConvertTo(*OutputImage);
+    if(ProcessedBmp.GetData()==nullptr)
+        return true;
 
- UBitmap &bmp = *OutputImage;
- if(bmp.GetData()==NULL)
-  return true;
+    if(!Detect(ProcessedBmp, *OutputRects, *OutputClasses, *OutputReliability))
+        return true;
 
- int w = bmp.GetWidth();
- int h = bmp.GetHeight();
+    OutputObjects->Resize(OutputRects->GetRows(), 6);
+    for(int i=0;i<OutputRects->GetRows();i++)
+    {
+        double wm = (*UseRelativeCoords)?(InputImage->GetWidth()):(1);
+        double hm = (*UseRelativeCoords)?(InputImage->GetHeight()):(1);
 
- UBitmap b;
- b.SetRes(w, h, bmp.GetColorModel());
- bmp.CopyTo(0,0,b);
+        (*OutputObjects)(i,0) = (int)((*OutputRects)(i,0)*wm);
+        (*OutputObjects)(i,1) = (int)((*OutputRects)(i,1)*hm);
+        (*OutputObjects)(i,2) = (int)((*OutputRects)(i,2)*wm);
+        (*OutputObjects)(i,3) = (int)((*OutputRects)(i,3)*hm);
+        (*OutputObjects)(i,4) = (*OutputReliability)(i,0);
+        (*OutputObjects)(i,5) = (*OutputClasses)(i,0);
+    }
 
- Graph.SetCanvas(OutputImage);
+    if(UseDebugImage)
+    {
+        DebugImage->SetColorModel(ubmRGB24,false);
+        InputImage->ConvertTo(*DebugImage);
 
- /// Тут считаем
- std::vector<std::vector<double> > result;
+        Graph.SetCanvas(DebugImage);
 
- ////////////////////////////////////////////////////////////
- /// Здесь место для обработки изображения сетью
+        UAFont *class_font=GetFont("Tahoma",20);
 
- image img = UBitmapToImage(b);
- if(img.data==NULL)
- {
-     LogMessageEx(RDK_EX_WARNING, __FUNCTION__, std::string("InputImage not converted correctly to darknet image"));
-     return true;
- }
-
- int nboxes = 0;
- image sized = resize_image(img, Network->w, Network->h);
- float *X = sized.data;
- clock_t time=clock();
- network_predict(Network, X);
- detection *dets = get_network_boxes(Network, 1, 1, ProbabilityThreshold, 0, 0, 0, &nboxes);
- printf("Predicted in %f seconds.\n", sec(clock()-time));
-
- int t = TopLayer.side*TopLayer.side*TopLayer.n;
- do_nms_obj(dets, nboxes, TopLayer.classes, 0.1);
-
- result.clear();
-
- for(int i=0; i<nboxes; i++)
- {
-     detection &d = dets[i];
-     if(d.objectness<ObjectnessThreshold)
-         continue;
-
-     int cmax = -1;
-     float probmax=-1.0;
-     for(int ci=0; ci<d.classes; ci++)
-     {
-         if(d.prob[ci]>probmax)
-         {
-             probmax = d.prob[ci];
-             cmax = ci;
-         }
-     }
-
-     //printf("Objectness is %f.\n", d.objectness);
-
-
-     if(FilterClassesList)
-     {
-        if(ClassesList->size()>0)
+        for(int i=0; i<OutputRects->GetRows(); i++)
         {
-            bool skip=true;
-            for(int ci=0; ci<ClassesList->size(); ci++)
+            int xmin, ymin, xmax, ymax;
+
+            xmin = (int)((*OutputObjects)(i,0));
+            ymin = (int)((*OutputObjects)(i,1));
+            xmax = (int)((*OutputObjects)(i,2));
+            ymax = (int)((*OutputObjects)(i,3));
+
+            double conf = (*OutputReliability)(i,0);
+            int cls = (*OutputClasses)(i,0);
+
+            Graph.SetPenColor(0x00FF00);
+            Graph.SetPenWidth(3);
+            Graph.Rect(xmin, ymin, xmax, ymax);
+
+            std::stringstream ss;
+            ss<<cls<<"["<<conf<<"]";
+
+            if(class_font)
             {
-                if((*ClassesList)[ci]==cmax)
-                {
-                    skip=false;
-                }
+                Graph.SetFont(class_font);
+                Graph.Text(ss.str(),xmin, ymax+3);
             }
-            if(skip)
-                continue;
         }
-     }
-
-
-     double xmin = d.bbox.x-d.bbox.w/2;
-     double xmax = d.bbox.x+d.bbox.w/2;
-     double ymin = d.bbox.y-d.bbox.h/2;
-     double ymax = d.bbox.y+d.bbox.h/2;
-     std::vector<double> res;
-     res.resize(6);
-     res[0] = xmin*w;
-     res[1] = ymin*h;
-     res[2] = xmax*w;
-     res[3] = ymax*h;
-
-     res[4] = probmax;
-     res[5] = cmax;
-     result.push_back(res);
-     //std::cerr<<d.bbox.x<<" "<<d.bbox.y<<" "<<d.bbox.w<<" "<<d.bbox.h<<" "<<probmax<<" "<<d.objectness<<" "<<voc_names[cmax]<<"\n";
- }
-
- free_detections(dets, nboxes);
- free_image(img);
- free_image(sized);
-
- OutputObjects->Resize(result.size(), 6);
-
- for(int i=0; i<result.size(); i++)
- {
-     (*OutputObjects)(i, 0) = result[i][0];
-     (*OutputObjects)(i, 1) = result[i][1];
-     (*OutputObjects)(i, 2) = result[i][2];
-     (*OutputObjects)(i, 3) = result[i][3];
-     (*OutputObjects)(i, 4) = result[i][4];
-     (*OutputObjects)(i, 5) = result[i][5];
- }
-
- ////////////////////////////////////////////////////////////
-  /*UAFont *class_font=GetFont("Tahoma",14);
-
-  for(int i=0; i<result.size(); i++)
-  {
-
-      int xmin, ymin, xmax, ymax;
-      xmin = (int)(result[i][0]);
-      ymin = (int)(result[i][1]);
-      xmax = (int)(result[i][2]);
-      ymax = (int)(result[i][3]);
-
-
-      Graph.SetPenColor(0x00FF00);
-      Graph.Rect(xmin, ymin, xmax, ymax);
-
-      double conf = result[i][4];
-      int cls = static_cast<int>(result[i][5]);
-
-      std::stringstream ss;
-      ss<<"[";
-      if(conf>0)
-      {
-          ss<<"P="<<conf;
-      }
-
-//      if(ClassedList.size()>cls)
-//      {
-//          ss<<"; C="<<ClassedList[cls].c_str();
-//      }
-//      else
-//      {
-//          ss<<"; C="<<cls;
-//      }
-      ss<<"]";
-
-      if(class_font)
-      {
-        Graph.SetFont(class_font);
-        Graph.Text(ss.str(),xmin, ymax+3);
-      }
-  }
-  */
- return true;
+    }
+    return true;
 }
 // --------------------------
-
-image TDarknetObjectDetector::UBitmapToImage(const UBitmap& ub)
+bool TDarknetObjectDetector::Detect(UBitmap &bmp, MDMatrix<double> &output_rects, MDMatrix<int> &output_classes, MDMatrix<double> &reliabilities)
 {
-    int h = ub.GetHeight();
-    int w = ub.GetWidth();
-    int cm = ub.GetColorModel();
-
-    int step = ub.GetLineByteLength();
-    int c = ub.GetPixelByteLength();
-
-    if(cm==ubmRGB24)
+    //TODO доработать детекцию
+    image img = UBitmapToImage(bmp);
+    if(img.data==nullptr)
     {
-        image im = make_image(w, h, c);
-        unsigned char *data = (unsigned char *)ub.GetData();
-        for(int i = 0; i < h; ++i){
-            for(int k= 0; k < c; ++k){
-                for(int j = 0; j < w; ++j){
-                    im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
-                }
+        LogMessageEx(RDK_EX_WARNING, __FUNCTION__, std::string("InputImage not converted correctly to darknet image"));
+        return false;
+    }
+
+    int nboxes = 0;
+    image sized = resize_image(img, Network->w, Network->h);
+    float *X = sized.data;
+
+    network_predict(Network, X);
+    detection *dets = get_network_boxes(Network, sized.w, sized.h, *ConfidenceThreshold, 0.5, 0, 0, &nboxes);
+
+
+    int t = TopLayer.side*TopLayer.side*TopLayer.n;
+    do_nms_obj(dets, nboxes, TopLayer.classes, NMSthreshold);
+
+    std::vector<std::vector<double> > result;
+
+    int num_detections = 0;
+    for(int i=0; i<nboxes; i++)
+    {
+        detection &d = dets[i];
+        if(d.objectness<ObjectnessThreshold)
+            continue;
+
+        int cmax = -1;
+        float probmax=-1.0;
+        for(int ci=0; ci<d.classes; ci++)
+        {
+            if(d.prob[ci]>probmax)
+            {
+                probmax = d.prob[ci];
+                cmax = ci;
             }
         }
-        return im;
+
+        if(FilterClassesList)
+        {
+           if(ClassesList->size()>0)
+           {
+               bool skip=true;
+               for(int ci=0; ci<ClassesList->size(); ci++)
+               {
+                   if((*ClassesList)[ci]==cmax)
+                   {
+                       skip=false;
+                   }
+               }
+               if(skip)
+                   continue;
+           }
+        }
+
+        double xmin = d.bbox.x-d.bbox.w/2;
+        double xmax = d.bbox.x+d.bbox.w/2;
+        double ymin = d.bbox.y-d.bbox.h/2;
+        double ymax = d.bbox.y+d.bbox.h/2;
+
+        num_detections++;
+        std::vector<double> res;
+        res.resize(6);
+        res[0] = xmin;
+        res[1] = ymin;
+        res[2] = xmax;
+        res[3] = ymax;
+
+        res[4] = probmax;
+        res[5] = cmax;
+
+        result.push_back(res);
 
     }
-    else if(cm==ubmY8)
+
+    free_detections(dets, nboxes);
+    free_image(img);
+    free_image(sized);
+
+
+    output_rects.Resize(num_detections,4);
+    output_classes.Resize(num_detections,1);
+    reliabilities.Resize(num_detections,1);
+
+    for(int y=0; y<num_detections; y++)
     {
-        return image();
+        output_rects(y,0) =  result[y][0];
+        output_rects(y,1) =  result[y][1];
+        output_rects(y,2) =  result[y][2];
+        output_rects(y,3) =  result[y][3];
+
+        reliabilities(y,0)  = result[y][4];
+        output_classes(y,0) = result[y][5];
     }
-    else
-    {
-        return image();
-    }
+
+    return true;
 }
-/*
- * Просто очень простой пример
-image ipl_to_image(IplImage* src)
-{
-    int h = src->height;
-    int w = src->width;
-    int c = src->nChannels;
-    image im = make_image(w, h, c);
-    unsigned char *data = (unsigned char *)src->imageData;
-    int step = src->widthStep;
-    int i, j, k;
 
-    for(i = 0; i < h; ++i){
-        for(k= 0; k < c; ++k){
-            for(j = 0; j < w; ++j){
-                im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
-            }
-        }
-    }
-    return im;
-}*/
 
 }
 #endif
