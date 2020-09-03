@@ -230,7 +230,6 @@ bool TDarknetObjectDetector::Detect(UBitmap &bmp, MDMatrix<double> &output_rects
     detection *dets = get_network_boxes(Network, sized.w, sized.h, *ConfidenceThreshold, 0.5, 0, 0, &nboxes);
 
 
-    int t = TopLayer.side*TopLayer.side*TopLayer.n;
     do_nms_obj(dets, nboxes, TopLayer.classes, NMSthreshold);
 
     std::vector<std::vector<double> > result;

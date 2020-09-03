@@ -21,8 +21,10 @@ ULProperty<int,TDarknetObjectDetector, ptPubParameter> NumClasses;
 
 /// Порог объектности, выше которого обнаружения считаются валидными (objectness)
 ULProperty<float,TDarknetObjectDetector, ptPubParameter> ObjectnessThreshold;
+
 ///Включить фильтрацию по целевым классам
 ULProperty<bool,TDarknetObjectDetector, ptPubParameter> FilterClassesList;
+
 ///Список
 ULProperty<std::vector<int>,TDarknetObjectDetector, ptPubParameter> ClassesList;
 

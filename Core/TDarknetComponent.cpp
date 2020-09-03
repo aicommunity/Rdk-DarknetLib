@@ -53,7 +53,7 @@ TDarknetComponent::TDarknetComponent(void)
 
 TDarknetComponent::~TDarknetComponent(void)
 {
-    free_network(Network);
+    //free_network(Network);
 }
 // --------------------------
 
