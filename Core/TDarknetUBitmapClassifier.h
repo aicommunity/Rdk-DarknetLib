@@ -53,8 +53,7 @@ virtual bool ADNBuild(void);
 // Сброс процесса счета без потери настроек
 virtual bool ADNReset(void);
 
-// Выполняет расчет этого объекта
-virtual bool ADNCalculate(void);
+
 // --------------------------
 
 /// Обрабатывает одно изображение

@@ -122,8 +122,7 @@ virtual bool ADNBuild(void);
 // Сброс процесса счета без потери настроек
 virtual bool ADNReset(void);
 
-// Выполняет расчет этого объекта
-virtual bool ADNCalculate(void);
+
 // --------------------------
 
 bool Detect(UBitmap &bmp, MDMatrix<double> &output_rects, MDMatrix<int> &output_classes, MDMatrix<double> &reliabilities);

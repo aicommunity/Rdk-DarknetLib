@@ -134,9 +134,9 @@ bool TDarknetComponent::AReset(void)
 }
 
 // Выполняет расчет этого объекта
-bool TDarknetComponent::ACalculate(void)
+bool TDarknetComponent::ABeforeCalculate(void)
 {
-    return ADNCalculate();
+    return true;
 }
 
 image TDarknetComponent::UBitmapToImage(const UBitmap& ub)

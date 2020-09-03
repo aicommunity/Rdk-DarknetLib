@@ -72,8 +72,8 @@ virtual bool AReset(void);
 virtual bool ADNReset(void)=0;
 
 // Выполняет расчет этого объекта
-virtual bool ACalculate(void);
-virtual bool ADNCalculate(void)=0;
+virtual bool ABeforeCalculate(void);
+
 // --------------------------
 image UBitmapToImage(const UBitmap& ub);
 
