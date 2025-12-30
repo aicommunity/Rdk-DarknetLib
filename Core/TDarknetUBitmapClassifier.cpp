@@ -40,9 +40,9 @@ bool RdkCvResize(const UBitmap &source, UBitmap &dest, int new_width, int new_he
  return true;
 }
 
-// Методы
+// РњРµС‚РѕРґС‹
 // --------------------------
-// Конструкторы и деструкторы
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂС‹
 // --------------------------  //DetectionClass("DetectionClass",this),
 TDarknetUBitmapClassifier::TDarknetUBitmapClassifier(void)
 : InputImages("InputImages",this),
@@ -63,9 +63,9 @@ TDarknetUBitmapClassifier::~TDarknetUBitmapClassifier(void)
 // --------------------------
 
 // --------------------------
-// Системные методы управления объектом
+// РЎРёСЃС‚РµРјРЅС‹Рµ РјРµС‚РѕРґС‹ СѓРїСЂР°РІР»РµРЅРёСЏ РѕР±СЉРµРєС‚РѕРј
 // --------------------------
-// Выделяет память для новой чистой копии объекта этого класса
+// Р’С‹РґРµР»СЏРµС‚ РїР°РјСЏС‚СЊ РґР»СЏ РЅРѕРІРѕР№ С‡РёСЃС‚РѕР№ РєРѕРїРёРё РѕР±СЉРµРєС‚Р° СЌС‚РѕРіРѕ РєР»Р°СЃСЃР°
 TDarknetUBitmapClassifier* TDarknetUBitmapClassifier::New(void)
 {
  return new TDarknetUBitmapClassifier;
@@ -86,7 +86,7 @@ void TDarknetUBitmapClassifier::AUnInit(void)
 {
 }
 // --------------------------
-// Скрытые методы управления счетом
+// РЎРєСЂС‹С‚С‹Рµ РјРµС‚РѕРґС‹ СѓРїСЂР°РІР»РµРЅРёСЏ СЃС‡РµС‚РѕРј
 // --------------------------
 bool TDarknetUBitmapClassifier::Initialize(void)
 {
@@ -119,29 +119,29 @@ bool TDarknetUBitmapClassifier::Initialize(void)
 }
 
 
-// Восстановление настроек по умолчанию и сброс процесса счета
+// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Рё СЃР±СЂРѕСЃ РїСЂРѕС†РµСЃСЃР° СЃС‡РµС‚Р°
 bool TDarknetUBitmapClassifier::ADefault(void)
 {
  NumClasses=2;
  return true;
 }
 
-// Обеспечивает сборку внутренней структуры объекта
-// после настройки параметров
-// Автоматически вызывает метод Reset() и выставляет Ready в true
-// в случае успешной сборки
+// РћР±РµСЃРїРµС‡РёРІР°РµС‚ СЃР±РѕСЂРєСѓ РІРЅСѓС‚СЂРµРЅРЅРµР№ СЃС‚СЂСѓРєС‚СѓСЂС‹ РѕР±СЉРµРєС‚Р°
+// РїРѕСЃР»Рµ РЅР°СЃС‚СЂРѕР№РєРё РїР°СЂР°РјРµС‚СЂРѕРІ
+// РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹Р·С‹РІР°РµС‚ РјРµС‚РѕРґ Reset() Рё РІС‹СЃС‚Р°РІР»СЏРµС‚ Ready РІ true
+// РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС€РЅРѕР№ СЃР±РѕСЂРєРё
 bool TDarknetUBitmapClassifier::ABuild(void)
 {
  return true;
 }
 
-// Сброс процесса счета без потери настроек
+// РЎР±СЂРѕСЃ РїСЂРѕС†РµСЃСЃР° СЃС‡РµС‚Р° Р±РµР· РїРѕС‚РµСЂРё РЅР°СЃС‚СЂРѕРµРє
 bool TDarknetUBitmapClassifier::AReset(void)
 {
  return true;
 }
 
-// Выполняет расчет этого объекта
+// Р’С‹РїРѕР»РЅСЏРµС‚ СЂР°СЃС‡РµС‚ СЌС‚РѕРіРѕ РѕР±СЉРµРєС‚Р°
 bool TDarknetUBitmapClassifier::ACalculate(void)
 {
  if(!InputImages.IsConnected())
@@ -172,9 +172,9 @@ bool TDarknetUBitmapClassifier::ACalculate(void)
          //RDK::SaveBitmapToFile("/home/ivan/testB.bmp", b);
 
          int object_cls = -1;
-         /// Тут считаем
+         /// РўСѓС‚ СЃС‡РёС‚Р°РµРј
          ////////////////////////////////////////////////////////////
-         /// Здесь место для обработки изображения сетью
+         /// Р—РґРµСЃСЊ РјРµСЃС‚Рѕ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃРµС‚СЊСЋ
 
          image img = UBitmapToImage(bmp);
 
@@ -331,7 +331,7 @@ bool TDarknetUBitmapClassifier::ACalculate(void)
                   result.push_back(val);
               }
           }
-          //Если не совпадает то ничего не записываем и выдать ошибку!
+          //Р•СЃР»Рё РЅРµ СЃРѕРІРїР°РґР°РµС‚ С‚Рѕ РЅРёС‡РµРіРѕ РЅРµ Р·Р°РїРёСЃС‹РІР°РµРј Рё РІС‹РґР°С‚СЊ РѕС€РёР±РєСѓ!
           if(result.size()!=NumClasses)
           {
               LogMessageEx(RDK_EX_WARNING,__FUNCTION__,std::string("TDarknetUBitmapClassifier error: NumClasses not equals to returned confidences count"));
