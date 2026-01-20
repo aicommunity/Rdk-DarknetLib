@@ -10,8 +10,8 @@ Rdk-DarknetLib предоставляет компонентный интерф�
 
 ```mermaid
 flowchart TB
-    TDarknetObjectDetector[TDarknetObjectDetector<br/>Детектор объектов]
-    TDarknetClassifier[TDarknetUBitmapClassifier<br/>Классификатор]
+    TDarknetObjectDetector["TDarknetObjectDetector (Детектор_объектов)"]
+    TDarknetClassifier["TDarknetUBitmapClassifier (Классификатор)"]
     DarknetLib[Darknet Library]
     
     TDarknetObjectDetector --> DarknetLib
@@ -47,6 +47,18 @@ flowchart TB
 Rdk-DarknetLib provides a component interface for working with Darknet.
 
 ### Library Structure
+
+```mermaid
+flowchart TB
+    TDarknetObjectDetector_EN["TDarknetObjectDetector (Object_detector)"]
+    TDarknetClassifier_EN["TDarknetUBitmapClassifier (Classifier)"]
+    DarknetLib_EN["Darknet Library"]
+    
+    TDarknetObjectDetector_EN --> DarknetLib_EN
+    TDarknetClassifier_EN --> DarknetLib_EN
+```
+
+The library provides components that wrap Darknet model loading and inference. Typical usage: load cfg/weights → prepare bitmap input → run detection/classification → expose results via output properties.
 
 ### Main Modules
 
