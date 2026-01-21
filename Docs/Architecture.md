@@ -20,18 +20,49 @@ flowchart TB
 
 ### Основные модули
 
-#### Детекция объектов
+#### Детекторы объектов
 
-- **TDarknetObjectDetector** - детектор объектов на базе Darknet
+- **TDarknetObjectDetector** - детектор объектов на основе Darknet/YOLO.
+  
+  **Основные функции:**
+  - Загрузка моделей YOLO
+  - Детекция объектов на изображениях
+  - Возврат координат и классов объектов
 
-#### Классификация
+#### Классификаторы
 
-- **TDarknetUBitmapClassifier** - классификатор изображений на базе Darknet
+- **TDarknetUBitmapClassifier** - классификатор растровых изображений на основе Darknet
+
+### Ключевые классы
+
+#### DarknetLib
+
+Главный класс библиотеки.
+
+Библиотека загружается при наличии Darknet (условная компиляция).
 
 ### Зависимости
 
-- `rdk.static.qt` - ядро Rdk
-- Darknet - библиотека Darknet
+- **rdk.static.qt** - ядро Rdk
+- **Darknet** - библиотека Darknet
+- Заголовочные файлы Darknet
+
+### Особенности
+
+- Интеграция с Darknet для детекции объектов
+- Поддержка моделей YOLO
+- Работа с изображениями через UBitmap
+
+### Примеры использования
+
+#### Darknet детектор
+
+```cpp
+// Создание Darknet детектора
+TDarknetObjectDetector* detector = storage->CreateComponent<TDarknetObjectDetector>();
+// Загрузка YOLO модели
+// Детекция объектов
+```
 
 ### См. также
 
@@ -62,18 +93,49 @@ The library provides components that wrap Darknet model loading and inference. T
 
 ### Main Modules
 
-#### Object Detection
+#### Object Detectors
 
-- **TDarknetObjectDetector** - Darknet-based object detector
+- **TDarknetObjectDetector** - object detector based on Darknet/YOLO.
+  
+  **Main functions:**
+  - Loading YOLO models
+  - Object detection on images
+  - Returning object coordinates and classes
 
-#### Classification
+#### Classifiers
 
-- **TDarknetUBitmapClassifier** - Darknet-based image classifier
+- **TDarknetUBitmapClassifier** - bitmap image classifier based on Darknet
+
+### Key Classes
+
+#### DarknetLib
+
+Main library class.
+
+The library is loaded when Darknet is available (conditional compilation).
 
 ### Dependencies
 
-- `rdk.static.qt` - Rdk core
-- Darknet - Darknet library
+- **rdk.static.qt** - Rdk core
+- **Darknet** - Darknet library
+- Darknet header files
+
+### Features
+
+- Integration with Darknet for object detection
+- Support for YOLO models
+- Working with images via UBitmap
+
+### Usage Examples
+
+#### Darknet Detector
+
+```cpp
+// Create Darknet detector
+TDarknetObjectDetector* detector = storage->CreateComponent<TDarknetObjectDetector>();
+// Load YOLO model
+// Object detection
+```
 
 ### See Also
 
