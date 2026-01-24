@@ -12,6 +12,21 @@
 - Детекции объектов с использованием Darknet
 - Классификации изображений
 
+### Быстрый старт
+
+#### Детекция объектов с Darknet
+
+```cpp
+// Создание детектора
+auto detector = storage->CreateComponent<TDarknetObjectDetector>("Detector");
+detector->ConfigPath = "yolo.cfg";
+detector->WeightsPath = "yolo.weights";
+detector->InputImage.AttachTo(&source->OutputImage);
+detector->Build();
+detector->Calculate();
+auto detections = detector->Detections();
+```
+
 ### Связь с корневой документацией
 
 Для обзорной информации см. корневую документацию проекта:
@@ -22,6 +37,7 @@
 - [Architecture.md](Architecture.md) - архитектура библиотеки
 - [Usage-Examples.md](Usage-Examples.md) - примеры использования
 - [API-Overview.md](API-Overview.md) - обзор API
+- [Component-Catalog.md](Component-Catalog.md) - каталог компонентов
 
 ---
 
@@ -47,3 +63,4 @@ For overview information see root project documentation:
 - [Architecture.md](Architecture.md) - library architecture
 - [Usage-Examples.md](Usage-Examples.md) - usage examples
 - [API-Overview.md](API-Overview.md) - API overview
+- [Component-Catalog.md](Component-Catalog.md) - component catalog
